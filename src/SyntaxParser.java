@@ -19,7 +19,7 @@ public class SyntaxParser {
     private Error error;
     private SymbolTable rootTable;
     private ArrayList<Integer> paramWidthList;//存储调用实参的维度
-    private HashMap<String, HashMap<Integer, Integer>> FuncParamMap; //key为函数的名称  value为这个函数对应的实参
+    private HashMap<String, HashMap<Integer, Integer>> FuncParamMap; //key为函数的名称  value为这个函数对应的实参及其维数
     private ArrayList<String> curFuncStack;  //在调用的时候f(g(h()))用来储存当前的function
     private Integer inWhile=0;//用于判断是否在循环块中
     private int paramIndex = 0; //用来记录实参的顺序
@@ -852,15 +852,6 @@ public class SyntaxParser {
                     curParam.putWidth(curParam.getParamIndex(), width - widthReal);
                 }
             }
-//            if (curFuncStack.size() > 0 && curParam.getInArray() == 0) {
-//                if (FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).containsKey(paramIndex)) {
-//                    if (FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).get(paramIndex) != width - widthReal) {
-//                        //void + int的情况 或者是 a[0](一维)+a(0维)  应该要报错
-//                        FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).put(paramIndex, 10);
-//                    }
-//                }
-//                FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).put(paramIndex, width - widthReal);
-//            }
         }
         return nLVal;
     }
@@ -925,22 +916,6 @@ public class SyntaxParser {
                     curParam.putWidth(curParam.getParamIndex(), 10);
                 else curParam.putWidth(curParam.getParamIndex(), width);
             }
-//            if (curFuncStack.size() != 0 && getSymbol(curToken, rootTable, rootTable.getTableSize()) != null) {
-//                width = getSymbol(curToken, rootTable, rootTable.getTableSize()).getWidth();
-////                 if(width != -1) {
-//                if (getSymbol(curToken, rootTable, rootTable.getTableSize()).getIsFunction()) {
-//                    if(FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).containsKey(paramIndex) &&
-//                            //这一句的目的是取维度小的那一组  也不是？？？？只要不一样就应该要抛出函数类型不匹配的错误
-//                        FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).get(paramIndex) != width) {
-//                        //把其维度定为 10  一定就是不匹配的了哈哈哈...
-//                        FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).put(paramIndex,10);
-//                    } else {
-//                        FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)).put(paramIndex,width);
-//                    }
-//                }
-//
-////                 }
-//            }
             curFuncStack.add(funcUseName);
 
             nextToken();
@@ -957,9 +932,6 @@ public class SyntaxParser {
                 } else {
                     error.checkErrJ(getLastToken(curToken));
                 }
-//                error.checkErrE(curFuncStack.get(curFuncStack.size() - 1), tokenLine, rootTable, FuncParamMap.get(curFuncStack.get(curFuncStack.size() - 1)));
-//                FuncParamMap.remove(curFuncStack.get(curFuncStack.size() - 1));
-//                curFuncStack.remove(curFuncStack.get(curFuncStack.size() - 1));
                 error.checkErrE(curParam.getName(), curParam.getLine(), rootTable, curParam.getParamMap());
                 curParam = curParam.getPrev();
             }
